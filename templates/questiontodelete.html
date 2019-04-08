@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <script>
+        setInterval(function() {
+            document.getElementById("mybutton").click();
+        }, 1000 * 120);
+    </script>
+</head>
+
+<body>
+    <form action="{{ url_for('grader')}} " method='post'>
+        {% for i in questions %} {%if i.id in picked%}
+        <br>
+        <li> {{i.title}}</li> <br> {%for j in choices%} {%if j.question_id == i.id%}
+        <span> <input type='radio' value='{{j.choice}}' name='{{i.id}}' />{{j.choice}}</span>
+        <br> {%endif%} {%endfor %} {%endif%}
+        <br> {% endfor %}
+        <input type='submit' value='submit' id="mybutton">
+    </form>
+
+</body>
+
+</html>
