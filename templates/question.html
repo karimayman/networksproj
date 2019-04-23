@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mystyle.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fontawesome.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script>
+        setInterval(function() {
+            document.getElementById("mybutton").click();
+        }, 1000 * 120);
+    </script>
+    <style>
+    body {background: url("/static/img/markman.jpg");background-attachment:fixed;background-size: 100%;background-repeat: no-repeat}
+    
+    </style>
+
+</head>
+
+<body>
+        <nav class="navbar navbar-light bg-dark">
+                <img style="margin-left:650px"src="/static/img/rqg.png" width="236" height="92">
+        </nav>
+    <center>
+            <form action="{{ url_for('grader')}} " method='post' style="margin-top:45px">  
+        {% for i in questions %} {%if i.id in picked%}
+        <br>
+        <li style="color: blanchedalmond"><h3>{{i.title}}</h3></li> <br> {%for j in choices%} {%if j.question_id == i.id%}
+        <span> <input type='radio' value='{{j.choice}}' name='{{i.id}}' />{{j.choice}}</span>
+        <br> {%endif%} {%endfor %} {%endif%}
+        <br> {% endfor %}
+        <input style="width:200px;height:70px ;"class="btn btn-dark" type='submit' value='Submit' id="mybutton">
+    
+    </form>
+   </center>
+</body>
+</html>
