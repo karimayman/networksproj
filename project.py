@@ -1,6 +1,6 @@
 
 from flask import Flask, render_template,g, request, redirect, url_for, \
-    jsonify 
+    jsonify
 from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Questions, Choices, Used
@@ -8,6 +8,8 @@ from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 from flask import session as var_session
 import random
 import string
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
 import httplib2
 import json
 from flask import make_response
@@ -19,19 +21,6 @@ engine = create_engine('sqlite:///test.db')
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 #session = DBSession()
-@app.route('/failsafe')
-def danger():
-
-    session = DBSession()
-    used = session.query(Used).all()
-    for i in used:
-        session.delete(i)
-        session.commit() 
-    session.close()
-    used = session.query(Used).all()
-    var_session.clear()
-    return render_template('failsafe.html')
- 
 
 @app.route('/nothere')
 def notsafe():
@@ -43,6 +32,7 @@ def notsafe():
         session.commit() 
     session.close()
     used = session.query(Used).all()
+    print(used)
     var_session.clear()
     return redirect(url_for('questionmaker'))
 
@@ -54,6 +44,7 @@ def questionmaker():
         var_session['used_question']=picked
     else:
         picked = var_session['used_question']    
+    print(picked)
     session = DBSession()
     # if var_session.get('used_question')!=None:
     #     if (len(g.used_question) < 1 ) or (len(g.used_question) < 2 ):   
@@ -67,12 +58,13 @@ def questionmaker():
     session.close()        
     if 0 not in picked:
 
-        return render_template('question.html' ,choices = choices,questions=questions,picked=picked)
+        return render_template('questiontodelete.html' ,choices = choices,questions=questions,picked=picked)
     else:
         return render_template('full.html')
    
 @app.route('/graded', methods=['POST'])
 def grader():
+    print("hello hello")
     grade = 0
     if request.method == 'POST':
         count = 0
@@ -114,6 +106,7 @@ def randomizer():
         for i in used: 
             used_question.append(i.question_id)
     tbu=[]
+    print(len(used_question))
     if len(used_question) < last.id-1:
         for i in range(3):
             not_used=random.choice([x for x in range(1,last.id+1) if x not in used_question])
